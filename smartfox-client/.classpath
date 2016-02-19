@@ -18,12 +18,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/jdom.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/netty-3.2.2.Final.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/SFS2X_API_Java.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/sfs2x-client-core.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/slf4j-api-1.6.1.jar"/>
-	<classpathentry kind="lib" path="/Volumes/WorkSpace/016 程式文件/03 Liberary/01 SmartFox2X/SFS2X_API_Java_v1.6.1/slf4j-simple-1.6.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -12,6 +12,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <main.rootDir>${project.basedir}</main.rootDir>
+	<sfs-api-java.jarPath>${main.rootDir}/misc/sfs2x_client/SFS2X_API_Java.jar</sfs-api-java.jarPath>
+	<sfs-client-core.jarPath>${main.rootDir}/misc/sfs2x_client/sfs2x-client-core.jar</sfs-client-core.jarPath>
+	<smartfox.version>2.9.0</smartfox.version>
   </properties>
 
   <dependencies>
@@ -21,5 +25,20 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <artifactId>smartfox-api-java</artifactId>
+      <groupId>smartfox-2x-server</groupId>
+      <version>${smartfox.version}</version>
+      <scope>system</scope>
+      <systemPath>${sfs-api-java.jarPath}</systemPath>
+  	</dependency>
+    <dependency>
+      <artifactId>smartfox-client-core</artifactId>
+      <groupId>smartfox-2x-server</groupId>
+      <version>${smartfox.version}</version>
+      <scope>system</scope>
+      <systemPath>${sfs-client-core.jarPath}</systemPath>
+    </dependency>
   </dependencies>
+  
 </project>
