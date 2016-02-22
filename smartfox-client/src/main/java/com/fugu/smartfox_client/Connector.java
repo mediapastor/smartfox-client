@@ -15,6 +15,7 @@ import sfs2x.client.requests.LoginRequest;
 public class Connector implements IEventListener {
 
 	private SmartFox sfs;
+	private final String hostname = "192.168.50.5";
 	
 	public Connector() {
 		initSmartFox();	    			
@@ -89,7 +90,7 @@ public class Connector implements IEventListener {
         String version = sfs.getVersion();
         System.out.println("Client Version: " + version);
         
-        sfs.connect("localhost", 9933);
+        sfs.connect(this.hostname, 9933);
         
 		// Add event listeners
 		sfs.addEventListener(SFSEvent.CONNECTION, this);
@@ -110,7 +111,7 @@ public class Connector implements IEventListener {
     	System.out.println("Taking action");
     	
     	ISFSObject objOut = new SFSObject();
-    	objOut.putInt("n1", 3);
+    	objOut.putInt("n1", 10);
     	objOut.putInt("n2", 4);
     	
     	sfs.send(new ExtensionRequest("math", objOut));

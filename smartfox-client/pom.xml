@@ -16,6 +16,11 @@
 	<sfs-api-java.jarPath>${main.rootDir}/misc/sfs2x_client/SFS2X_API_Java.jar</sfs-api-java.jarPath>
 	<sfs-client-core.jarPath>${main.rootDir}/misc/sfs2x_client/sfs2x-client-core.jar</sfs-client-core.jarPath>
 	<smartfox.version>2.9.0</smartfox.version>
+	<slf4j-api.version>1.7.9</slf4j-api.version>
+	<slf4j-simple.version>1.7.9</slf4j-simple.version>
+	<netty-all.version>3.2.2.Final</netty-all.version>
+	<commons-lang.version>2.4</commons-lang.version>
+	<jdom2.version>2.0.6</jdom2.version>
   </properties>
 
   <dependencies>
@@ -39,6 +44,31 @@
       <scope>system</scope>
       <systemPath>${sfs-client-core.jarPath}</systemPath>
     </dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>${slf4j-api.version}</version>
+	</dependency>
+	<dependency>
+      <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-simple</artifactId>
+	  <version>${slf4j-simple.version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.jboss.netty</groupId>
+	  <artifactId>netty</artifactId>
+	  <version>${netty-all.version}</version>
+	</dependency>	
+	<dependency>
+	  <groupId>commons-lang</groupId>
+	  <artifactId>commons-lang</artifactId>
+	  <version>${commons-lang.version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.jdom</groupId>
+	  <artifactId>jdom2</artifactId>
+	  <version>${jdom2.version}</version>
+	</dependency>
   </dependencies>
   
 </project>
