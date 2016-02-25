@@ -1,5 +1,7 @@
 package com.fugu.smartfox_client;
 
+import java.util.Arrays;
+
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
@@ -8,9 +10,11 @@ import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
 import sfs2x.client.core.SFSEvent;
+import sfs2x.client.requests.CreateRoomRequest;
 import sfs2x.client.requests.ExtensionRequest;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
+import sfs2x.client.requests.RoomSettings;
 
 public class Connector implements IEventListener {
 
@@ -18,19 +22,22 @@ public class Connector implements IEventListener {
 	private final String hostname = "192.168.50.5";
 	
 	public Connector() {
-		initSmartFox();	    			
+		init();	    			
 	}
 
-	private void initSmartFox() {
-
+	private void init() {
+		
+		// Create an instance of the SmartFox class
 		this.sfs = new SmartFox(true);
-		System.out.print("Connector initialized");
-
+		
+		// Turn on the debug feature
+		sfs.setDebug(true);
+		
+		System.out.print("Create an instance of the SmartFox class");
 	}
 
 	@Override
-	public void dispatch(final BaseEvent event) throws SFSException {
-		
+	public void dispatch(final BaseEvent event) throws SFSException {		
 		
 		switch(event.getType()) {
 			case SFSEvent.CONNECTION:
@@ -59,7 +66,7 @@ public class Connector implements IEventListener {
 			case SFSEvent.ROOM_JOIN:
 				
 				System.out.println("The current room is " + sfs.getLastJoinedRoom().getName());
-				action();
+//				action();
 				break;
 				
 			case SFSEvent.ROOM_JOIN_ERROR:
@@ -71,21 +78,22 @@ public class Connector implements IEventListener {
 				
 				System.out.println("Extension response pops");
 				onExtensionRequest(event);
-				break;		
+				break;	
+				
+//			case SFSEvent.ROOM_ADD:
+//				
+//				this.onRoomAdded(event);
+//				break;
+//				
+//			case SFSEvent.ROOM_CREATION_ERROR:
+//			
+//				this.onRoomCreationError(event);
+//				break;
 		}
 		
 	}
 	
-	private void disconnect() {
-
-		if (sfs.isConnected()) {
-			System.out.print("Disconnect: Disconnecting client");
-			sfs.disconnect();
-			System.out.print("Disconnect: Disconnected ? " + !sfs.isConnected());
-		}
-	}
-	
-    public void start() {
+    public void connect() {
 
         String version = sfs.getVersion();
         System.out.println("Client Version: " + version);
@@ -103,8 +111,17 @@ public class Connector implements IEventListener {
 		sfs.addEventListener(SFSEvent.SOCKET_ERROR, this);
 		sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, this);
 		
-		
     }
+	
+	public void disconnect() {
+
+		if (sfs.isConnected()) {
+			System.out.println("Disconnect: Disconnecting client");
+			sfs.disconnect();
+			System.out.println("Disconnect: Disconnected ? " + !sfs.isConnected());
+		}
+	}
+	
     
     public void action() {
     	
@@ -114,7 +131,12 @@ public class Connector implements IEventListener {
     	objOut.putInt("n1", 10);
     	objOut.putInt("n2", 4);
     	
-    	sfs.send(new ExtensionRequest("math", objOut));
+    	
+    	// 測試 server 端 MathMultiHandler
+    	sfs.send(new ExtensionRequest("math.add", objOut));
+    	
+    	// 測試 The other room
+//    	this.createNewRoom();
     }
     
 	private void onExtensionRequest(BaseEvent e) throws SFSException {
@@ -125,5 +147,38 @@ public class Connector implements IEventListener {
     	System.out.println("The cmd is: " + responseCmd);
 		System.out.println("The sum is: " + responseParams.getInt("sum"));
     }
+	
+	
+	private void createNewRoom() {
+		
+		System.out.println("Creating new room!");
+		
+		RoomSettings settings = new RoomSettings("The Room");
+		settings.setMaxUsers(40);
+//		settings.setGroupId("ChatGroup");
+		
+		sfs.send(new CreateRoomRequest(settings));
+		
+	}
+	
+//	private void onRoomAdded(BaseEvent e) {
+//		
+//		System.out.println("Room created");
+//		
+////		Arrays.toString(e.getArguments().entrySet().toArray());
+//		String responseCmd = e.getArguments().get("room").toString();
+////		ISFSObject response = (SFSObject) e.getArguments().get("params");
+//		System.out.println("The room is: " + responseCmd);
+//	}
+	
+//	private void onRoomCreationError(BaseEvent e)
+//	{
+//		String responseError = (String) e.getArguments().get("errorMessage");
+//		System.out.println("An error occurred while attempting to create the Room: " + responseError);
+//	}
+	
+	public SmartFox getSmartFox() {
+		return this.sfs;
+	}
 	
 }
