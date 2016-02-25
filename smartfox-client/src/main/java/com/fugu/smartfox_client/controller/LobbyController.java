@@ -1,11 +1,16 @@
 package com.fugu.smartfox_client.controller;
 
-import com.fugu.smartfox_client.Connector;
+import java.io.IOException;
+
+import com.fugu.smartfox_client.Client;
+import com.fugu.smartfox_client.SFSController;
+import com.fugu.smartfox_client.Util.Util;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
@@ -16,30 +21,26 @@ import sfs2x.client.requests.RoomSettings;
 
 public class LobbyController implements IEventListener {
 	
-	private Connector conn;
-	private SmartFox sfs;
+	private SmartFox sfsClient;
 	
-	@FXML private TextField firstName;	
-	
-	public void initData(Connector conn) {
-		this.conn = conn;
-		this.sfs = conn.getSmartFox();
+	public LobbyController() {
 		
-		// 新增 room 事件
-		sfs.addEventListener(SFSEvent.ROOM_ADD, this);
-		sfs.addEventListener(SFSEvent.ROOM_CREATION_ERROR, this);
+		initSmartFox();
 	}
 
-	/**
-	 * connect to smartfox
-	 * 
-	 * @param actionEvent
-	 */
-	public void handleConnect(ActionEvent actionEvent) {
+	public void initSmartFox() {
+		sfsClient = SFSController.getSFSClient();
 		
-		conn.connect();
-		System.out.println("JavaFX handleConnect done");
+		// Add event listeners
+		sfsClient.addEventListener(SFSEvent.CONNECTION_LOST, this);
+		sfsClient.addEventListener(SFSEvent.CONNECTION_RETRY, this);
+		sfsClient.addEventListener(SFSEvent.CONNECTION_RESUME, this);
+//		sfsClient.addEventListener(SFSEvent.ROOM_JOIN, this);
+		sfsClient.addEventListener(SFSEvent.ROOM_JOIN_ERROR, this);
+		sfsClient.addEventListener(SFSEvent.EXTENSION_RESPONSE, this);
 	}
+	
+
 	
 	/**
 	 * disconnect from smartfox
@@ -48,7 +49,7 @@ public class LobbyController implements IEventListener {
 	 */
 	public void handleDisconnect(ActionEvent actionEvent) {
 		
-		conn.disconnect();
+		sfsClient.disconnect();
 		System.out.println("JavaFX handleDisconnect done");
 	}
 	
@@ -67,11 +68,11 @@ public class LobbyController implements IEventListener {
 		settings.setMaxUsers(0);
 //		settings.setExtension(extension);
 		
-		sfs.send(new CreateRoomRequest(settings, true, sfs.getLastJoinedRoom()));
+		sfsClient.send(new CreateRoomRequest(settings, true, sfsClient.getLastJoinedRoom()));
 	}
 	
 	public void handleJoinRoom(ActionEvent actionEvent) {
-		sfs.send( new JoinRoomRequest("hangman") );
+		sfsClient.send( new JoinRoomRequest("hangman") );
 	}
 
 	/**
@@ -81,23 +82,54 @@ public class LobbyController implements IEventListener {
 	public void dispatch(BaseEvent event) throws SFSException {
 
 		switch(event.getType()) {
-		
-			case SFSEvent.CONNECTION:
 				
-				System.out.println("Room created");
-				
-//				Arrays.toString(e.getArguments().entrySet().toArray());
-				String responseCmd = event.getArguments().get("room").toString();
-//				ISFSObject response = (SFSObject) e.getArguments().get("params");
-				System.out.println("The room is: " + responseCmd);
+			case SFSEvent.CONNECTION_LOST:				
+				onConnectionLost(event);
 				break;
-				
-			case SFSEvent.CONNECTION_LOST:
-				
-				String responseError = (String) event.getArguments().get("errorMessage");
-				System.out.println("An error occurred while attempting to create the Room: " + responseError);
+//			case SFSEvent.ROOM_JOIN:
+//				onRoomJoin(event);
+//				break;
+			case SFSEvent.ROOM_JOIN_ERROR:
+				onRoomJoinError(event);
 				break;
 		}
 	}
 	
+	/**
+	 * invoke when player lost connection
+	 * 
+	 * @param event
+	 * @throws IOException 
+	 */
+	private void onConnectionLost(BaseEvent event) {
+		String reason = (String) event.getArguments().get("reason");
+		System.out.println("Lobby Connection lost :" + reason);	
+		try {
+			goToLogin();
+		} catch (IOException e) {
+			Util.logException(e);
+		}
+	}
+	
+
+	
+	/**
+	 * evoke when player try to join a room and failed
+	 * 
+	 * @param event
+	 */
+	private void onRoomJoinError(BaseEvent event) {
+		String errorMessage = (String) event.getArguments().get("errorMessage");
+		System.out.println("Room joining failed :" + errorMessage);
+	}
+	
+	private void goToLogin() throws IOException {	
+		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("login.fxml"));
+		GridPane root = (GridPane) loader.load();
+		
+		Stage mainStage = Client.primaryStage;
+		mainStage.getScene().setRoot(root); //we dont need to change whole sceene, only set new root.
+		
+		System.out.println("going to login......");
+	}
 }

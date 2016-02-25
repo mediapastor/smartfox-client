@@ -1,5 +1,7 @@
 package com.fugu.smartfox_client;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,19 +13,25 @@ public class Client extends Application {
 	public static Stage primaryStage;
 	
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) {
 		
-		this.primaryStage = primaryStage;
+		Client.primaryStage = primaryStage;
 		
 		// load sameple.fxml layout
 		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("login.fxml"));
-		GridPane root = (GridPane) loader.load();
-		
-		primaryStage.setTitle("Login");
-		Scene loginScene = new Scene(root, 400, 400);
-		loginScene.getStylesheets().add("login.css");
-		primaryStage.setScene(loginScene);
-		primaryStage.show();
+		GridPane root;
+		try {
+			root = (GridPane) loader.load();
+			primaryStage.setTitle("Login");
+			Scene loginScene = new Scene(root, 400, 400);
+			loginScene.getStylesheets().add("login.css");
+			primaryStage.setScene(loginScene);
+			primaryStage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Load error message: " + e.getMessage());
+		}		
+
 	}
 
 	

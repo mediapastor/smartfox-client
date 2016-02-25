@@ -4,31 +4,36 @@ import java.io.IOException;
 
 import com.fugu.smartfox_client.Client;
 import com.fugu.smartfox_client.SFSController;
-import com.smartfoxserver.v2.exceptions.SFSException;
+import com.fugu.smartfox_client.Util.Util;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
 import sfs2x.client.core.SFSEvent;
+import sfs2x.client.entities.SFSRoom;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
 
 public class LoginController implements IEventListener {
 	
 	private SmartFox sfsClient;
-	private final static String DEFAULT_SERVER_ADDRESS = "192.168.50.5";
+	private final static String DEFAULT_SERVER_ADDRESS = "localhost";
 	private final static String DEFAULT_SERVER_PORT = "9933";
 	
 	private String username;
 	private String password;
 	
-	@FXML private TextField firstName;	
+	@FXML private TextField usernameField;
+	@FXML private PasswordField passwordField;
+	@FXML private Text actionTarget;
 	
 	public LoginController() {
 		
@@ -41,12 +46,14 @@ public class LoginController implements IEventListener {
 		// Add event listeners
 		sfsClient.addEventListener(SFSEvent.CONNECTION, this);
 		sfsClient.addEventListener(SFSEvent.CONNECTION_LOST, this);
+		sfsClient.addEventListener(SFSEvent.CONNECTION_RETRY, this);
+		sfsClient.addEventListener(SFSEvent.CONNECTION_RESUME, this);
+		sfsClient.addEventListener(SFSEvent.HANDSHAKE, this);
+		sfsClient.addEventListener(SFSEvent.SOCKET_ERROR, this);
 		sfsClient.addEventListener(SFSEvent.LOGIN, this);
 		sfsClient.addEventListener(SFSEvent.LOGIN_ERROR, this);
 		sfsClient.addEventListener(SFSEvent.ROOM_JOIN, this);
 		sfsClient.addEventListener(SFSEvent.ROOM_JOIN_ERROR, this);
-		sfsClient.addEventListener(SFSEvent.HANDSHAKE, this);
-		sfsClient.addEventListener(SFSEvent.SOCKET_ERROR, this);
 		sfsClient.addEventListener(SFSEvent.EXTENSION_RESPONSE, this);
 	}
 
@@ -55,7 +62,7 @@ public class LoginController implements IEventListener {
 	 * smartfox event dispatcher
 	 */
 	@Override
-	public void dispatch(BaseEvent event) throws SFSException {
+	public void dispatch(BaseEvent event)  {
 
 		switch(event.getType()) {
 		
@@ -64,6 +71,7 @@ public class LoginController implements IEventListener {
 				if (event.getArguments().get("success").equals(true)) {				
 					// Login as guest in current zone
 					System.out.println("The connection mode " + sfsClient.getConnectionMode());
+					
 					login();
 				} else {
 					System.out.println("Connection error");
@@ -72,29 +80,39 @@ public class LoginController implements IEventListener {
 				
 			case SFSEvent.CONNECTION_LOST:
 				
-				String responseError = (String) event.getArguments().get("errorMessage");
-				System.out.println("An error occurred while attempting to create the Room: " + responseError);
+//				String responseError = (String) event.getArguments().get("errorMessage");
+				System.out.println("Connection lost");
 				break;
 				
+			case SFSEvent.CONNECTION_RETRY:
+				System.out.println("Connection retry");
+				break;
+			case SFSEvent.CONNECTION_RESUME:
+				System.out.println("Connection resume");
+				break;
 			case SFSEvent.LOGIN:
 				
 				System.out.println("login success!");
-				System.out.println(event.getArguments().toString());
+//				System.out.println(event.getArguments().toString());
 				joinRoom();
 				
 			case SFSEvent.LOGIN_ERROR:
 				
-				String loginError = (String) event.getArguments().get("errorMessage");
-				System.out.println("An error occurred while attempting to login: " + loginError + " ; all arguments " + event.getArguments().toString());
+//				String loginError = (String) event.getArguments().get("errorMessage");
+//				System.out.println("An error occurred while attempting to login: " + loginError + " ; all arguments " + event.getArguments().toString());
+				actionTarget.setText("Wrong username or password");
 				break;
 				
 			case SFSEvent.ROOM_JOIN:
+				
+				System.out.println("Joined room");
 				try {
 					goToLobby();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 				System.out.println("The current room is " + sfsClient.getLastJoinedRoom().getName());
+				onRoomJoin(event);
 				break;
 				
 			case SFSEvent.ROOM_JOIN_ERROR:
@@ -109,11 +127,11 @@ public class LoginController implements IEventListener {
 	 * 
 	 * @param actionEvent
 	 */
-	public void handleConnect(ActionEvent actionEvent) {
+	@FXML
+	public void handleLogin(ActionEvent actionEvent) {
 		
 		connect(DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
 		System.out.println("Connecting to IP " + DEFAULT_SERVER_ADDRESS + " Port " + DEFAULT_SERVER_PORT);
-		System.out.println(actionEvent.toString());
 	}
 	
 	private void connect(String serverIP, String serverPort) {
@@ -130,8 +148,8 @@ public class LoginController implements IEventListener {
 	}
 	
 	private void login(){
-		this.username = "tim";
-		this.password = "1234";
+		this.username = usernameField.getText(); // "tim";
+		this.password = passwordField.getText(); // "1234";
 		sfsClient.send(new LoginRequest(username, password, "MyExtension"));
 		
 		System.out.println("Now login......");
@@ -142,6 +160,16 @@ public class LoginController implements IEventListener {
 		
 		System.out.println("joining room......");
 		
+	}
+	
+	/**
+	 * evoke when player joins a room
+	 * 
+	 * @param event
+	 */
+	private void onRoomJoin(BaseEvent event) {
+		SFSRoom room = (SFSRoom) event.getArguments().get("room");
+		System.out.println("Room joined successfully :" + room.getName());
 	}
 
 	
