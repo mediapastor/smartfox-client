@@ -3,8 +3,15 @@
 	-fx-vgap: 20;
 }
 
-#title {
+.title {
     -fx-font: 40px "Serif";
     -fx-padding: 10 10 40 10;
-    
+}
+
+.text-field {
+	-fx-font-familu: Helvetica;
+}
+
+#usernameField {
+	
 }

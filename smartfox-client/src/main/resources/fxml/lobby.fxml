@@ -1,0 +1,38 @@
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane 
+		fx:controller="com.fugu.smartfox_client.controller.LobbyController" 
+		stylesheets="css/lobby.css" 
+		xmlns:fx="http://javafx.com/fxml"
+		alignment="center">
+
+	<Text text="SmartFox Client" 
+		styleClass="title" 
+		fx:id="title" 
+		GridPane.rowIndex="0" 
+		GridPane.columnSpan="2" 
+		GridPane.halignment="CENTER" />
+	
+	<HBox 
+		fx:id="hBox"
+		GridPane.rowIndex="1" 
+		GridPane.columnSpan="2" 
+		GridPane.halignment="CENTER">
+	</HBox>
+	
+	<Button text="Disconnect"
+		onAction="#handleDisconnect"
+		GridPane.rowIndex="2" 
+		GridPane.columnIndex="1"
+		GridPane.halignment="CENTER" />
+	
+	<Button text="Create Room"
+		onAction="#handleCreateRoom"
+		GridPane.rowIndex="3" 
+		GridPane.columnIndex="1"
+		GridPane.halignment="CENTER" />				
+	
+</GridPane>

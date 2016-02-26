@@ -18,13 +18,13 @@ public class Client extends Application {
 		Client.primaryStage = primaryStage;
 		
 		// load sameple.fxml layout
-		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("login.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/login.fxml"));
 		GridPane root;
 		try {
 			root = (GridPane) loader.load();
 			primaryStage.setTitle("Login");
-			Scene loginScene = new Scene(root, 400, 400);
-			loginScene.getStylesheets().add("login.css");
+			Scene loginScene = new Scene(root, 600, 480);
+//			loginScene.getStylesheets().add("css/login.css");
 			primaryStage.setScene(loginScene);
 			primaryStage.show();
 		} catch (IOException e) {
@@ -39,5 +39,7 @@ public class Client extends Application {
 
 		launch(args);
 	}
+	
+
 
 }
