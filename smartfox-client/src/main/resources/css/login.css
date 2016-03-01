@@ -3,7 +3,7 @@
 	-fx-vgap: 20;
 }
 
-.title {
+.LoginView.title {
     -fx-font: 40px "Serif";
     -fx-padding: 10 10 40 10;
 }

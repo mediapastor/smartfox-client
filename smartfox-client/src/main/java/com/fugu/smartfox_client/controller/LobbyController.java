@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.fugu.smartfox_client.Client;
 import com.fugu.smartfox_client.SFSController;
-import com.fugu.smartfox_client.Util.Util;
+import com.fugu.smartfox_client.util.Util;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
 import javafx.application.Platform;

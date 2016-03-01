@@ -1,4 +1,4 @@
-package com.fugu.smartfox_client.Util;
+package com.fugu.smartfox_client.util;
 
 import java.util.Arrays;
 import java.util.Calendar;
