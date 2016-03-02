@@ -5,6 +5,7 @@ import com.fugu.smartfox_client.model.User;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -23,7 +24,7 @@ public class LoginView extends GridPane {
 	
 	// TextField
 	public TextField usernameFld = new TextField();
-	public TextField passwordFld = new TextField();
+	public PasswordField passwordFld = new PasswordField();
 	
 	// Button
 	public Button loginBtn = new Button("Login");

@@ -1,36 +1,42 @@
 package com.fugu.smartfox_client.presenter;
 
 import com.fugu.smartfox_client.Client;
-import com.fugu.smartfox_client.SFSController;
+import com.fugu.smartfox_client.Connector;
 import com.fugu.smartfox_client.model.User;
 import com.fugu.smartfox_client.util.Util;
 import com.fugu.smartfox_client.view.LoginView;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
+import sfs2x.client.requests.LoginRequest;
 
 public class LoginPresenter {
 
-	private final User model;
+	private final User user;
 	private final LoginView view;
+	private final SmartFox sfs = Client.getSmartFox();
 
-	private final static String DEFAULT_SERVER_ADDRESS = "192.168.50.5";
+	private final static String DEFAULT_SERVER_ADDRESS = "192.168.1.153";
 	private final static String DEFAULT_SERVER_PORT = "9933";
 	
-	public LoginPresenter(User model, LoginView view) {
-		this.model = model;
+	public LoginPresenter(User user, LoginView view) {
+		this.user = user;
 		this.view = view;
 		attachEvents();
 	}
 	
 	public void attachEvents() {
-		view.loginBtn.setOnAction(e -> login());
+		view.loginBtn.setOnAction(e -> login(e));
 	}
 	
-	private void login() {
-		SFSController.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT));
+	private void login(ActionEvent e) {
+		
+//		Platform.runLater(() ->sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT)));
+		sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT));
 	}
 	
 	private void error() {
