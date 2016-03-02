@@ -1,7 +1,9 @@
 package com.fugu.smartfox_client;
 
 import com.fugu.smartfox_client.handler.ConnectionHandler;
+import com.fugu.smartfox_client.handler.ExtensionHandler;
 import com.fugu.smartfox_client.handler.LoginHandler;
+import com.fugu.smartfox_client.handler.RoomHandler;
 import com.fugu.smartfox_client.model.User;
 import com.fugu.smartfox_client.presenter.LoginPresenter;
 import com.fugu.smartfox_client.view.LoginView;
@@ -20,8 +22,28 @@ public class Client extends Application {
 	
 	public Client() {
 
-
+		System.out.println("@@ Constructor @@");
 		
+		this.user = new User();
+		
+		ConnectionHandler connectionHandler = new ConnectionHandler(user);
+		LoginHandler loginHandler = new LoginHandler(user);
+		RoomHandler roomHandler = new RoomHandler();
+		ExtensionHandler extensionHandler = new ExtensionHandler();
+
+		sfs.addEventListener(SFSEvent.CONNECTION, connectionHandler);
+		sfs.addEventListener(SFSEvent.CONNECTION_LOST, connectionHandler);
+		sfs.addEventListener(SFSEvent.CONNECTION_RETRY, connectionHandler);
+		sfs.addEventListener(SFSEvent.CONNECTION_RESUME, connectionHandler);
+		sfs.addEventListener(SFSEvent.HANDSHAKE, connectionHandler);
+		sfs.addEventListener(SFSEvent.SOCKET_ERROR, connectionHandler);
+		sfs.addEventListener(SFSEvent.LOGIN, loginHandler);
+		sfs.addEventListener(SFSEvent.LOGIN_ERROR, loginHandler);
+		sfs.addEventListener(SFSEvent.ROOM_JOIN, roomHandler);
+		sfs.addEventListener(SFSEvent.ROOM_JOIN_ERROR, roomHandler);
+		sfs.addEventListener(SFSEvent.ROOM_ADD, roomHandler);
+		sfs.addEventListener(SFSEvent.ROOM_CREATION_ERROR, roomHandler);
+		sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, extensionHandler);
 	}
 	
 	/**
@@ -29,6 +51,7 @@ public class Client extends Application {
 	 */
 	@Override
 	public void init() {
+		System.out.println("@@ JavaFX Initiate @@");
 		// TBD
 	}
 	
@@ -38,23 +61,11 @@ public class Client extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
-		ConnectionHandler connectionHandler = new ConnectionHandler(user);
-
-		sfs.addEventListener(SFSEvent.CONNECTION, connectionHandler);
-		sfs.addEventListener(SFSEvent.CONNECTION_LOST, connectionHandler);
-		sfs.addEventListener(SFSEvent.CONNECTION_RETRY, connectionHandler);
-		sfs.addEventListener(SFSEvent.CONNECTION_RESUME, connectionHandler);
-		sfs.addEventListener(SFSEvent.HANDSHAKE, connectionHandler);
-		sfs.addEventListener(SFSEvent.SOCKET_ERROR, connectionHandler);
-		
-		this.user = new User();
-
-		
+		System.out.println("@@ JavaFX Start @@");
 		
 		this.primaryStage = primaryStage;
 		
 		// put MVP together
-		System.out.println("instantiating user");
 		LoginView loginView = new LoginView(user);
 		
 		// must set the scene before creating the presenter that uses

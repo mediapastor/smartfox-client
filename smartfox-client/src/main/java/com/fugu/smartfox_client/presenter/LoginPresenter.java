@@ -1,7 +1,6 @@
 package com.fugu.smartfox_client.presenter;
 
 import com.fugu.smartfox_client.Client;
-import com.fugu.smartfox_client.Connector;
 import com.fugu.smartfox_client.model.User;
 import com.fugu.smartfox_client.util.Util;
 import com.fugu.smartfox_client.view.LoginView;
@@ -12,7 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
-import sfs2x.client.requests.LoginRequest;
 
 public class LoginPresenter {
 
@@ -20,7 +18,7 @@ public class LoginPresenter {
 	private final LoginView view;
 	private final SmartFox sfs = Client.getSmartFox();
 
-	private final static String DEFAULT_SERVER_ADDRESS = "192.168.1.153";
+	private final static String DEFAULT_SERVER_ADDRESS = "localhost";
 	private final static String DEFAULT_SERVER_PORT = "9933";
 	
 	public LoginPresenter(User user, LoginView view) {
@@ -35,8 +33,8 @@ public class LoginPresenter {
 	
 	private void login(ActionEvent e) {
 		
-//		Platform.runLater(() ->sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT)));
-		sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT));
+		Platform.runLater(() ->sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT)));
+//		sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT));
 	}
 	
 	private void error() {

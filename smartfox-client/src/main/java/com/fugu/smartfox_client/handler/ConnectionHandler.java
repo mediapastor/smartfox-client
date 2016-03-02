@@ -58,9 +58,8 @@ public class ConnectionHandler implements IEventListener {
 	}
 	
 	private void handleConnection() {
-		System.out.println(user.getUsername() + " " + user.getPassword());
-//		sfs.send(new LoginRequest(user.getUsername(), user.getPassword(), "MyExtension")); 
-		sfs.send(new LoginRequest("tim", "1234", "MyExtension")); 
+		System.out.println("username input: " + user.getUsername() + " password input: " + user.getPassword());
+		sfs.send(new LoginRequest(user.getUsername(), user.getPassword(), "MyExtension")); 
 	}
 
 }
