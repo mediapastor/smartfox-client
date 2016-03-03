@@ -1,9 +1,12 @@
 package com.fugu.smartfox_client.presenter;
 
 import com.fugu.smartfox_client.Client;
+import com.fugu.smartfox_client.model.Game;
 import com.fugu.smartfox_client.model.User;
 import com.fugu.smartfox_client.util.Util;
+import com.fugu.smartfox_client.view.GameView;
 import com.fugu.smartfox_client.view.LoginView;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,30 +14,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
+import sfs2x.client.requests.ExtensionRequest;
 
-public class LoginPresenter {
-
-	private final User user;
-	private final LoginView view;
-	private final SmartFox sfs = Client.getSmartFox();
-
-	private final static String DEFAULT_SERVER_ADDRESS = "192.168.1.153";
-	private final static String DEFAULT_SERVER_PORT = "9933";
+public class GamePresenter {
 	
-	public LoginPresenter(User user, LoginView view) {
-		this.user = user;
+	private final Game game;
+	private final GameView view;
+	private final SmartFox sfs = Client.getSmartFox();
+	
+
+	public GamePresenter(Game game, GameView view) {
+		this.game = game;
 		this.view = view;
 		attachEvents();
 	}
 	
 	public void attachEvents() {
-		view.loginBtn.setOnAction(e -> login(e));
+		view.guessBtn.setOnAction(e -> {
+			guessAction(e);
+			System.out.println("Sending extension request to server... event name :" + e.getEventType().getName());
+		});
+		
 	}
 	
-	private void login(ActionEvent e) {
+	private void guessAction(ActionEvent e) {
 		
-		Platform.runLater(() ->sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT)));
-//		sfs.connect(DEFAULT_SERVER_ADDRESS, Integer.parseInt(DEFAULT_SERVER_PORT));
+		ISFSObject sfso = game.toSFSObject();
+		sfso.iterator().forEachRemaining( ele -> System.out.println(ele.toString()));
+		Platform.runLater(() ->sfs.send(new ExtensionRequest("game", sfso)));
+		
 	}
 	
 	private void error() {

@@ -4,6 +4,7 @@ import com.fugu.smartfox_client.Client;
 import com.fugu.smartfox_client.model.User;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
+import javafx.application.Platform;
 import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
@@ -28,7 +29,7 @@ public class ConnectionHandler implements IEventListener {
 				
 				if (event.getArguments().get("success").equals(true)) {				
 					System.out.println("The connection mode " + sfs.getConnectionMode());
-					handleConnection();
+					handleConnection(event);
 				} else {
 					System.out.println("Connection error");
 				}
@@ -36,6 +37,7 @@ public class ConnectionHandler implements IEventListener {
 				
 			case SFSEvent.CONNECTION_LOST:
 				System.out.println("Connection lost");
+				handleConnectionLost(event);
 				break;
 	
 			case SFSEvent.CONNECTION_RETRY:
@@ -57,9 +59,20 @@ public class ConnectionHandler implements IEventListener {
 		
 	}
 	
-	private void handleConnection() {
+	/**
+	 * Handle connection success actions 
+	 */
+	private void handleConnection(BaseEvent event) {
 		System.out.println("username input: " + user.getUsername() + " password input: " + user.getPassword());
 		sfs.send(new LoginRequest(user.getUsername(), user.getPassword(), "MyExtension")); 
 	}
-
+	
+	/**
+	 * Handle connection lost actions 
+	 * 
+	 * @param event
+	 */
+	private void handleConnectionLost(BaseEvent event) {
+		Platform.runLater(() -> Client.setScene("login"));
+	}
 }

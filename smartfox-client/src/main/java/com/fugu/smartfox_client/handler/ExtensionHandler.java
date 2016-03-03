@@ -1,6 +1,7 @@
 package com.fugu.smartfox_client.handler;
 
 import com.fugu.smartfox_client.Client;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
 import sfs2x.client.SmartFox;
@@ -18,23 +19,19 @@ public class ExtensionHandler implements IEventListener {
 		switch(event.getType()) {
 		
 		case SFSEvent.EXTENSION_RESPONSE:
-			System.out.println("Room joined successfully: " + sfs.getLastJoinedRoom().getName());
-
-			break;
-			
-		case SFSEvent.ROOM_JOIN_ERROR:
-			System.out.println("Room join error: " + event.getArguments().get("errorMessage"));
-			break;
-		
-		case SFSEvent.ROOM_ADD:
-			System.out.println("Room add");
-			break;
-			
-		case SFSEvent.ROOM_CREATION_ERROR:
-			System.out.println("Room creation error: " + event.getArguments().get("errorMessage"));
+			System.out.println("Extension response : " + event.getArguments().get("cmd").toString());
+			handleGameGuess(event);
 			break;
 		}
 		
 	}
-
+	
+	private void handleGameGuess(BaseEvent event) {
+		
+		String cmd = event.getArguments().get("cmd").toString();
+		System.out.println("Extension response: " + cmd);
+		
+		ISFSObject resObj = (ISFSObject) event.getArguments().get("params");
+		System.out.println("Extension response object: " + resObj.toString());
+	}
 }

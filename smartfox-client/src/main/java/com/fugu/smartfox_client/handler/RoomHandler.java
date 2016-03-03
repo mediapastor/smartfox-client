@@ -1,12 +1,16 @@
 package com.fugu.smartfox_client.handler;
 
 import com.fugu.smartfox_client.Client;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
+import javafx.application.Platform;
 import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
 import sfs2x.client.core.SFSEvent;
+import sfs2x.client.requests.ExtensionRequest;
 
 public class RoomHandler implements IEventListener {
 
@@ -19,7 +23,7 @@ public class RoomHandler implements IEventListener {
 		
 		case SFSEvent.ROOM_JOIN:
 			System.out.println("Room joined successfully: " + sfs.getLastJoinedRoom().getName());
-
+			handleRoom();
 			break;
 			
 		case SFSEvent.ROOM_JOIN_ERROR:
@@ -35,5 +39,15 @@ public class RoomHandler implements IEventListener {
 			break;
 		}
 		
+	}
+	
+	private void handleRoom() {
+		// change scene to game
+		Platform.runLater(() -> Client.setScene("game"));
+
+		// initialize the game
+		// Platform.runLater(() ->sfs.send(new ExtensionRequest("game.init", sfso)));
+		ISFSObject sfso = new SFSObject();
+		sfs.send(new ExtensionRequest("game", sfso));
 	}
 }

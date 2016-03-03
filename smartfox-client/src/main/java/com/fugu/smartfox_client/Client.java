@@ -4,11 +4,15 @@ import com.fugu.smartfox_client.handler.ConnectionHandler;
 import com.fugu.smartfox_client.handler.ExtensionHandler;
 import com.fugu.smartfox_client.handler.LoginHandler;
 import com.fugu.smartfox_client.handler.RoomHandler;
+import com.fugu.smartfox_client.model.Game;
 import com.fugu.smartfox_client.model.User;
+import com.fugu.smartfox_client.presenter.GamePresenter;
 import com.fugu.smartfox_client.presenter.LoginPresenter;
+import com.fugu.smartfox_client.view.GameView;
 import com.fugu.smartfox_client.view.LoginView;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import sfs2x.client.SmartFox;
@@ -19,17 +23,26 @@ public class Client extends Application {
 	public static Stage primaryStage;
 	private static SmartFox sfs = new SmartFox(true);	
 	private static User user;
+	private static Game game;
+	private static Scene loginScene;
+	private static Scene gameScene;
+	
+	private ConnectionHandler connectionHandler;
+	private LoginHandler loginHandler;
+	private RoomHandler roomHandler;
+	private ExtensionHandler extensionHandler;
 	
 	public Client() {
 
 		System.out.println("@@ Constructor @@");
 		
-		this.user = new User();
+		user = new User();
+		game = new Game();
 		
-		ConnectionHandler connectionHandler = new ConnectionHandler(user);
-		LoginHandler loginHandler = new LoginHandler(user);
-		RoomHandler roomHandler = new RoomHandler();
-		ExtensionHandler extensionHandler = new ExtensionHandler();
+		connectionHandler = new ConnectionHandler(user);
+		loginHandler = new LoginHandler(user);
+		roomHandler = new RoomHandler();
+		extensionHandler = new ExtensionHandler();
 
 		sfs.addEventListener(SFSEvent.CONNECTION, connectionHandler);
 		sfs.addEventListener(SFSEvent.CONNECTION_LOST, connectionHandler);
@@ -44,6 +57,8 @@ public class Client extends Application {
 		sfs.addEventListener(SFSEvent.ROOM_ADD, roomHandler);
 		sfs.addEventListener(SFSEvent.ROOM_CREATION_ERROR, roomHandler);
 		sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, extensionHandler);
+		
+	
 	}
 	
 	/**
@@ -56,7 +71,7 @@ public class Client extends Application {
 	}
 	
 	/**
-	 * JavaFX start
+	 * JavaFX client start
 	 */
 	@Override
 	public void start(Stage primaryStage) {
@@ -67,14 +82,17 @@ public class Client extends Application {
 		
 		// put MVP together
 		LoginView loginView = new LoginView(user);
+		GameView gameView = new GameView(game);
 		
 		// must set the scene before creating the presenter that uses
 		// the scene to listen for the focus change
-		Scene scene = new Scene(loginView, 640, 480);
+		loginScene = new Scene(loginView, 640, 480);
+		gameScene = new Scene(gameView, 800, 640);
 		
 		LoginPresenter loginPresenter = new LoginPresenter(user, loginView);
+		GamePresenter gamePresenter = new GamePresenter(game, gameView);
 		
-		primaryStage.setScene(scene);
+		primaryStage.setScene(loginScene);
 		primaryStage.setTitle("JavaFX Client");
 		primaryStage.show();
 	
@@ -82,12 +100,30 @@ public class Client extends Application {
 	}
 	
 	/**
-	 * JavaFX stop
+	 * JavaFX client stop
 	 */
-//	@Override
-//	public void stop() {
-//		this.stop();
-//	}
+	@Override
+	public void stop() {
+		
+		System.out.println("Stopping JavaFX");
+		
+		// remove SmartFox listeners
+		Platform.runLater(() -> {
+			sfs.removeEventListener(SFSEvent.CONNECTION, connectionHandler);
+			sfs.removeEventListener(SFSEvent.CONNECTION_LOST, connectionHandler);
+			sfs.removeEventListener(SFSEvent.CONNECTION_RETRY, connectionHandler);
+			sfs.removeEventListener(SFSEvent.CONNECTION_RESUME, connectionHandler);
+			sfs.removeEventListener(SFSEvent.HANDSHAKE, connectionHandler);
+			sfs.removeEventListener(SFSEvent.SOCKET_ERROR, connectionHandler);
+			sfs.removeEventListener(SFSEvent.LOGIN, loginHandler);
+			sfs.removeEventListener(SFSEvent.LOGIN_ERROR, loginHandler);
+			sfs.removeEventListener(SFSEvent.ROOM_JOIN, roomHandler);
+			sfs.removeEventListener(SFSEvent.ROOM_JOIN_ERROR, roomHandler);
+			sfs.removeEventListener(SFSEvent.ROOM_ADD, roomHandler);
+			sfs.removeEventListener(SFSEvent.ROOM_CREATION_ERROR, roomHandler);
+			sfs.removeEventListener(SFSEvent.EXTENSION_RESPONSE, extensionHandler);
+		});
+	}
 
 	/**
 	 * Application starts
@@ -114,5 +150,17 @@ public class Client extends Application {
 	
 	public static User getUser() {
 		return user;
+	}
+	
+	public static void setScene(String scene) {
+		if (scene == "game") {
+			primaryStage.setScene(gameScene);
+		} else if (scene == "login") {
+			primaryStage.setScene(loginScene);
+		} else {
+			throw new IllegalArgumentException("Wrong secene parameter " + scene);
+		}
+		primaryStage.setTitle("JavaFX Client");
+		primaryStage.show();
 	}
 }
