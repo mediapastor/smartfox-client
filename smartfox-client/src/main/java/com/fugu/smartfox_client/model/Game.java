@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 
 
 public class Game implements SerializableSFSType {
@@ -27,8 +28,11 @@ public class Game implements SerializableSFSType {
 	// private Integer guessCountLimit;
 	private BooleanProperty isOver = new SimpleBooleanProperty(this, "isOver");
 	private BooleanProperty isWon = new SimpleBooleanProperty(this, "isWon");;
-	private ListProperty<String> guessesHit = new SimpleListProperty<String>(this, "guessesHit", null);
-	private ListProperty<String> guessesMissed = new SimpleListProperty<String>(this, "guessesMissed", null);;
+	// private ListProperty<String> guessesHit = new SimpleListProperty<String>(this, "guessesHit", null);
+	private ListProperty<String> guessesHit = new SimpleListProperty<String>(this, "guessesHit", FXCollections.observableArrayList(new ArrayList<String>()));
+	// private ListProperty<String> guessesMissed = new SimpleListProperty<String>(this, "guessesMissed", null);
+	private ListProperty<String> guessesMissed = new SimpleListProperty<String>(this, "guessesMissed", FXCollections.observableArrayList(new ArrayList<String>()));
+	
 
 	public Game() {
 		wordToShow.set("");
@@ -36,8 +40,8 @@ public class Game implements SerializableSFSType {
 		guessCount.set(0);
 		isOver.set(false);
 		isWon.set(false);
-//		guessesHit.setAll(new ArrayList<>());
-//		guessesMissed.setAll(new ArrayList<>());
+//		guessesHit.setAll(FXCollections.observableArrayList(new ArrayList<String>()));
+//		guessesMissed.setAll(FXCollections.observableArrayList(new ArrayList<String>()));
 //		System.out.println("Game constructor : " + guessesHit.get().toString());
 	}
 	
@@ -177,19 +181,19 @@ public class Game implements SerializableSFSType {
 	 * 
 	 * @return SFSObject 
 	 */
-	public SFSObject toSFSObject() {
+	public ISFSObject toSFSObject() {
 		
 		ISFSObject sfso = new SFSObject();
 		
 		sfso.putUtfString("wordToShow", getWordToShow());
 		sfso.putUtfString("guess", getGuess());
-//		sfso.putUtfStringArray("guessesHit", getGuessesHit());
-//		sfso.putUtfStringArray("guessesMissed", getGuessesMissed());
+		sfso.putUtfStringArray("guessesHit", getGuessesHit());
+		sfso.putUtfStringArray("guessesMissed", getGuessesMissed());
 		sfso.putInt("guessCount", getGuessCount());
 		sfso.putBool("isOver", getIsOver());
 		sfso.putBool("isWon", getIsWon());
 		
-		return SFSObject.newFromObject(this);
+		return sfso;
 	}
 	
 	/**
@@ -205,7 +209,7 @@ public class Game implements SerializableSFSType {
 		game.setWordToShow(sfsObject.getUtfString("wordToShow"));
 		game.setGuess(sfsObject.getUtfString("guess"));
 		game.setGuessesHit(new ArrayList<String>(sfsObject.getUtfStringArray("guessesHit")));
-		game.setGuessesMissed(new ArrayList<String>(sfsObject.getUtfStringArray("guessesHit")));
+		game.setGuessesMissed(new ArrayList<String>(sfsObject.getUtfStringArray("guessesMissed")));
 		game.setGuessCount(sfsObject.getInt("guessCount"));
 		game.setOver(sfsObject.getBool("isOver"));
 		game.setWon(sfsObject.getBool("isWon"));

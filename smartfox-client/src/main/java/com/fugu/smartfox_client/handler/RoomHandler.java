@@ -46,8 +46,8 @@ public class RoomHandler implements IEventListener {
 		Platform.runLater(() -> Client.setScene("game"));
 
 		// initialize the game
+		// ISFSObject sfso = new SFSObject();
 		// Platform.runLater(() ->sfs.send(new ExtensionRequest("game.init", sfso)));
-		ISFSObject sfso = new SFSObject();
-		sfs.send(new ExtensionRequest("game", sfso));
+		// sfs.send(new ExtensionRequest("game", sfso));
 	}
 }

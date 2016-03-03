@@ -1,6 +1,7 @@
 package com.fugu.smartfox_client.handler;
 
 import com.fugu.smartfox_client.Client;
+import com.fugu.smartfox_client.model.Game;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
 
@@ -31,7 +32,10 @@ public class ExtensionHandler implements IEventListener {
 		String cmd = event.getArguments().get("cmd").toString();
 		System.out.println("Extension response: " + cmd);
 		
-		ISFSObject resObj = (ISFSObject) event.getArguments().get("params");
-		System.out.println("Extension response object: " + resObj.toString());
+		ISFSObject response = (ISFSObject) event.getArguments().get("params");
+		System.out.println("Extension response object: " + response.toString());
+		
+		// Game game = Game.fromSFSObject(response);
+		
 	}
 }

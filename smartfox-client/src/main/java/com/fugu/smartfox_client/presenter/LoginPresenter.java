@@ -18,7 +18,7 @@ public class LoginPresenter {
 	private final LoginView view;
 	private final SmartFox sfs = Client.getSmartFox();
 
-	private final static String DEFAULT_SERVER_ADDRESS = "192.168.1.153";
+	private final static String DEFAULT_SERVER_ADDRESS = "localhost";
 	private final static String DEFAULT_SERVER_PORT = "9933";
 	
 	public LoginPresenter(User user, LoginView view) {

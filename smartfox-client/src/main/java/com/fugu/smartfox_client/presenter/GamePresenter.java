@@ -41,7 +41,7 @@ public class GamePresenter {
 		
 		ISFSObject sfso = game.toSFSObject();
 		sfso.iterator().forEachRemaining( ele -> System.out.println(ele.toString()));
-		Platform.runLater(() ->sfs.send(new ExtensionRequest("game", sfso)));
+		Platform.runLater(() ->sfs.send(new ExtensionRequest("game.guess", sfso)));
 		
 	}
 	
